@@ -1,0 +1,285 @@
+<style>
+	.pagination{margin:0}
+</style>
+<div class="row">
+	<div class="col-lg-3 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-green">
+			<div class="inner">
+				<h3><%= sumall.luckSum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<p>幸运28盈亏：
+					<%= sumall.luckSum.percents %>
+				</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-money"></i>
+			</div>
+			<a href="#" onclick="menuClick('/luck')" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+	<div class="col-lg-3 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-orange">
+			<div class="inner">
+				<h3><%= sumall.happySum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<p>开心16盈亏：
+					<%= sumall.happySum.percents %>
+				</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-diamond"></i>
+			</div>
+			<a href="#" onclick="menuClick('/happy')" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- ./col -->
+	<div class="col-lg-3 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-blue-gradient">
+			<div class="inner">
+				<h3><%= sumall.pk5Sum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<p>pk5盈亏：
+					<%= sumall.pk5Sum.percents %>
+				</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-rub"></i>
+			</div>
+			<a href="#" onclick="menuClick('/pk5')" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<div class="col-lg-3 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-yellow-gradient">
+			<div class="inner">
+				<h3><%= sumall.sgsSum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<p>三国杀盈亏：
+					<%= sumall.sgsSum.percents %>
+				</p>
+			</div>
+			<div class="icon">
+				<i class="fa fa-heart"></i>
+			</div>
+			<a href="#" onclick="menuClick('/sgs')" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12 col-xs-12">
+		<div class="box box-solid">
+			<div class="box-header">
+			</div>
+			<div class="box-body">
+				<canvas id="luckChart" style="height:250px;width:100%"></canvas>
+			</div>
+			<!-- /.box-body-->
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="box box-solid">
+			<div class="box-header">
+			</div>
+			<div class="box-body">
+				<canvas id="happyChart" style="height:250px;width:100%"></canvas>
+			</div>
+			<!-- /.box-body-->
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-12 col-xs-12">
+		<div class="box box-solid">
+			<div class="box-header">
+			</div>
+			<div class="box-body">
+				<canvas id="pk5Chart" style="height:250px;width:100%"></canvas>
+			</div>
+			<!-- /.box-body-->
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12 col-xs-12">
+		<div class="box box-solid">
+			<div class="box-header">
+			</div>
+			<div class="box-body">
+				<canvas id="sgsChart" style="height:250px;width:100%"></canvas>
+			</div>
+			<!-- /.box-body-->
+		</div>
+	</div>
+</div>
+
+<!-- ChartJS 1.0.1 -->
+<script src="wframe/plugins/chartjs/Chart.min.js"></script>
+
+<script>
+	// Get context with jQuery - using jQuery's .get() method.
+	var luckChartCanvas = $("#luckChart").get(0).getContext("2d");
+	// This will get the first returned node in the jQuery collection.
+	var luckData = eval('<%-luckSumDayData%>');
+	var happyData = eval('<%-happySumDayData%>');
+	var pk5Data = eval('<%-pk5SumDayData%>');
+	var sgsData = eval('<%-sgsSumDayData%>');
+	var luckLabelArr = [],
+		happyLabelArr = [],
+		pk5LabelArr = [],
+		sgsLabelArr = [],
+		luckPercentsArr = [],
+		happyPercentsArr = [],
+		pk5PercentsArr = [],
+		sgsPercentsArr = [];
+
+	for(var i = luckData.length - 1; i >= 0; i--) {
+		luckLabelArr.push(luckData[i].openDay);
+		luckPercentsArr.push(luckData[i].percents.substring(0, luckData[i].percents.indexOf("%")) / 100);
+		//		pk5PercentsArr.push(pk5Data[i].percents.substring(0, pk5Data[i].percents.indexOf("%")) / 100);
+	}
+
+	var commonOptions = {
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						callback: function(label, index, lables) {
+							return(label * 100).toFixed(0) + '%';
+						}
+					}
+				}]
+			},
+			tooltips: {
+				backgroundColor: 'rgba(102, 204, 51,1)',
+				callbacks: {
+					label: function(tooltipItem, data) {
+						var label = data.datasets[tooltipItem.datasetIndex].label || ':';
+						label += (tooltipItem.yLabel * 100).toFixed(2) + '%';
+						return label;
+					}
+				}
+			}
+		}
+	}
+
+	var luckChartData = {
+		labels: luckLabelArr,
+		//     "January", "February", "March", "April", "May", "June", "July"],
+		datasets: [{
+			label: "幸运28盈亏比例",
+			data: luckPercentsArr,
+			backgroundColor: [
+				'rgba(102, 204, 51, 0.5)'
+			],
+			borderColor: [
+				'rgba(102, 204, 51,1)'
+			],
+			borderWidth: 1
+		}]
+	};
+
+	var luckChartOptions = {
+		type: 'line',
+		data: luckChartData,
+		options: commonOptions.options
+	}
+
+	var luckChart = new Chart(luckChartCanvas, luckChartOptions);
+
+	//开心16表格开始
+	var happyChartCanvas = $("#happyChart").get(0).getContext("2d");
+	for(var i = happyData.length - 1; i >= 0; i--) {
+		happyLabelArr.push(happyData[i].openDay);
+		happyPercentsArr.push(happyData[i].percents.substring(0, happyData[i].percents.indexOf("%")) / 100);
+	}
+	var happyChartData = {
+		labels: happyLabelArr,
+		//     "January", "February", "March", "April", "May", "June", "July"],
+		datasets: [{
+			label: "开心16盈亏比例",
+			data: happyPercentsArr,
+			backgroundColor: [
+				'rgba(255, 153, 102, 0.5)'
+			],
+			borderColor: [
+				'rgba(255, 153, 102,1)'
+			],
+			borderWidth: 1
+		}]
+	};
+
+	var happyChartOptions = {
+		type: 'line',
+		data: happyChartData,
+		options: commonOptions.options
+	}
+
+	var happyChart = new Chart(happyChartCanvas, happyChartOptions);
+
+	//PK5表格开始
+	var pk5ChartCanvas = $("#pk5Chart").get(0).getContext("2d");
+	for(var i = pk5Data.length - 1; i >= 0; i--) {
+		pk5LabelArr.push(pk5Data[i].openDay);
+		pk5PercentsArr.push(pk5Data[i].percents.substring(0, pk5Data[i].percents.indexOf("%")) / 100);
+	}
+	var pk5ChartData = {
+		labels: pk5LabelArr,
+		//     "January", "February", "March", "April", "May", "June", "July"],
+		datasets: [{
+			label: "Pk5盈亏比例",
+			data: pk5PercentsArr,
+			backgroundColor: [
+				'rgba(0, 102, 255, 0.5)'
+			],
+			borderColor: [
+				'rgba(0, 102, 255,1)'
+			],
+			borderWidth: 1
+		}]
+	};
+
+	var pk5ChartOptions = {
+		type: 'line',
+		data: pk5ChartData,
+		options: commonOptions.options
+	}
+
+	var pk5Chart = new Chart(pk5ChartCanvas, pk5ChartOptions);
+	
+	
+	//SGS表格开始
+	var sgsChartCanvas = $("#sgsChart").get(0).getContext("2d");
+	for(var i = sgsData.length - 1; i >= 0; i--) {
+		sgsLabelArr.push(sgsData[i].openDay);
+		sgsPercentsArr.push(sgsData[i].percents.substring(0, sgsData[i].percents.indexOf("%")) / 100);
+	}
+	var sgsChartData = {
+		labels: sgsLabelArr,
+		//     "January", "February", "March", "April", "May", "June", "July"],
+		datasets: [{
+			label: "三国杀盈亏比例",
+			data: sgsPercentsArr,
+			backgroundColor: [
+				'rgba(127, 96, 0, 0.5)'
+			],
+			borderColor: [
+				'rgba(127, 96, 0,1)'
+			],
+			borderWidth: 1
+		}]
+	};
+
+	var sgsChartOptions = {
+		type: 'line',
+		data: sgsChartData,
+		options: commonOptions.options
+	}
+
+	var sgsChart = new Chart(sgsChartCanvas, sgsChartOptions);
+
+	
+</script>

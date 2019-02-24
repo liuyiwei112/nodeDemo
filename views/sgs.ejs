@@ -1,0 +1,96 @@
+<div class="row">
+	<div class="col-lg-12 col-xs-12">
+		<div class="box box-solid">
+			<div class="box-body">
+				<div class="row">
+					<form class="form-horizontal">
+						<div class="col-lg-4 col-xs-6">
+							<button type="button" class="btn btn-success" onclick="syncData()">同步</button>
+							<button type="button" class="btn btn-success" onclick="syncRateData()">刷新返奖率</button>
+							<button type="button" class="btn btn-primary" onclick="refreshData()">查询最新数据</button>
+						</div>
+					</form>
+				</div>
+			</div>
+			<table id="example1" class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th data-field="issue">期号</th>
+						<th data-field="openTime">开奖时间</th>
+						<th data-field="openNo" data-formatter="showImage">开奖号码</th>
+						<th data-field="returnRate" data-formatter="showRate">返奖率</th>
+						<th data-field="baseRate">基准返奖率</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<!-- /.box-body-->
+	</div>
+</div>
+</div>
+
+<!-- DataTables -->
+<script src="wframe/plugins/bootstrap-table/bootstrap-table.js"></script>
+<script src="js/loading.js"></script>
+<script>
+	//	loading();
+	//	setTimeout(function(){
+	//		hideLoading();
+	//	},2000)
+	var $table = $('#example1').bootstrapTable({
+		url: baseUrl+'no/openNoList?guessType=sgs',
+		cache: false,
+		queryParams: function() {
+			return null;
+		}, //自定义参数
+		responseHandler: function(sourceData) {
+			return {
+				"row": sourceData.list, //如果自定义则需要返回自定义的名称
+				"total": sourceData.totalCount
+			}
+		}, //自定义处理函数，如果需要特殊处理的返回
+		pageSize: 10, //每页数量，默认名称pageSize，可通过pSizeName自定义名称
+		pageNumber: 1, //默认为1，当前页码
+		pagination: true,
+		dataName: 'row', //自定义数据名称
+		totalName: 'total', //自定义数据总行数
+		pIndexName: 'page', //自定义分页数名称，如 ?page=0
+		pSizeName: 'size', //自定义每页数量名称 如 ?size=10
+		sidePagination: 'server'
+	});
+	
+	var syncData = function(){
+		loading('正在同步中，请稍等...');
+		$.get(baseUrl+'no/openNoSync?guessType=sgs',function(d){
+			alert(d);
+			hideLoading();
+			refreshData();
+		})
+	};
+	
+	var refreshData = function(){
+		$table.bootstrapTable('refresh');
+	};
+	
+	var syncRateData = function(){
+		loading('正在刷新返奖率，请稍等...');
+		$.get(baseUrl+'no/syncRate',function(d){
+			alert(d.message);
+			hideLoading();
+			refreshData();
+		})
+	}
+	
+	function showRate(v,r){
+		if(!v) return '-';
+		if(v > r.baseRate){
+			return '<font color="red">'+v+'</font>';
+		}else{
+			return '<font color="green">'+v+'</font>';
+		}
+	}
+	
+	function showImage(v,r){
+		return '<img src="images/r_'+v+'.png" style="width:25px;height:25px"/>';
+	}
+</script>
