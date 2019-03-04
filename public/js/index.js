@@ -18,5 +18,5 @@ function goToUrl(_url){
 }
 
 $(function(){
-	menuClick('/home');
+	menuClick('/allIn');
 })

@@ -6,9 +6,9 @@
 		<!-- small box -->
 		<div class="small-box bg-green">
 			<div class="inner">
-				<h3><%= sumall.luckSum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<h3><%= sumall.luckSum.summaryCount %><font style="font-size: 20px">期</font></h3>
 				<p>幸运28盈亏：
-					<%= sumall.luckSum.percents %>
+					<%= sumall.luckSum.summaryValue %>%
 				</p>
 			</div>
 			<div class="icon">
@@ -22,9 +22,9 @@
 		<!-- small box -->
 		<div class="small-box bg-orange">
 			<div class="inner">
-				<h3><%= sumall.happySum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<h3><%= sumall.happySum.summaryCount %><font style="font-size: 20px">期</font></h3>
 				<p>开心16盈亏：
-					<%= sumall.happySum.percents %>
+					<%= sumall.happySum.summaryValue %>%
 				</p>
 			</div>
 			<div class="icon">
@@ -38,9 +38,9 @@
 		<!-- small box -->
 		<div class="small-box bg-blue-gradient">
 			<div class="inner">
-				<h3><%= sumall.pk5Sum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<h3><%= sumall.pk5Sum.summaryCount %><font style="font-size: 20px">期</font></h3>
 				<p>pk5盈亏：
-					<%= sumall.pk5Sum.percents %>
+					<%= sumall.pk5Sum.summaryValue %>%
 				</p>
 			</div>
 			<div class="icon">
@@ -53,9 +53,9 @@
 		<!-- small box -->
 		<div class="small-box bg-yellow-gradient">
 			<div class="inner">
-				<h3><%= sumall.sgsSum.totalNum %><font style="font-size: 20px">期</font></h3>
+				<h3><%= sumall.sgsSum.summaryCount %><font style="font-size: 20px">期</font></h3>
 				<p>三国杀盈亏：
-					<%= sumall.sgsSum.percents %>
+					<%= sumall.sgsSum.summaryValue %>%
 				</p>
 			</div>
 			<div class="icon">
@@ -138,7 +138,7 @@
 
 	for(var i = luckData.length - 1; i >= 0; i--) {
 		luckLabelArr.push(luckData[i].openDay);
-		luckPercentsArr.push(luckData[i].percents.substring(0, luckData[i].percents.indexOf("%")) / 100);
+		luckPercentsArr.push(luckData[i].summaryValue);
 		//		pk5PercentsArr.push(pk5Data[i].percents.substring(0, pk5Data[i].percents.indexOf("%")) / 100);
 	}
 
@@ -194,7 +194,7 @@
 	var happyChartCanvas = $("#happyChart").get(0).getContext("2d");
 	for(var i = happyData.length - 1; i >= 0; i--) {
 		happyLabelArr.push(happyData[i].openDay);
-		happyPercentsArr.push(happyData[i].percents.substring(0, happyData[i].percents.indexOf("%")) / 100);
+		happyPercentsArr.push(happyData[i].summaryValue);
 	}
 	var happyChartData = {
 		labels: happyLabelArr,
@@ -219,12 +219,12 @@
 	}
 
 	var happyChart = new Chart(happyChartCanvas, happyChartOptions);
-
+	
 	//PK5表格开始
 	var pk5ChartCanvas = $("#pk5Chart").get(0).getContext("2d");
 	for(var i = pk5Data.length - 1; i >= 0; i--) {
 		pk5LabelArr.push(pk5Data[i].openDay);
-		pk5PercentsArr.push(pk5Data[i].percents.substring(0, pk5Data[i].percents.indexOf("%")) / 100);
+		pk5PercentsArr.push(pk5Data[i].summaryValue);
 	}
 	var pk5ChartData = {
 		labels: pk5LabelArr,
@@ -250,12 +250,11 @@
 
 	var pk5Chart = new Chart(pk5ChartCanvas, pk5ChartOptions);
 	
-	
 	//SGS表格开始
 	var sgsChartCanvas = $("#sgsChart").get(0).getContext("2d");
 	for(var i = sgsData.length - 1; i >= 0; i--) {
 		sgsLabelArr.push(sgsData[i].openDay);
-		sgsPercentsArr.push(sgsData[i].percents.substring(0, sgsData[i].percents.indexOf("%")) / 100);
+		sgsPercentsArr.push(sgsData[i].summaryValue);
 	}
 	var sgsChartData = {
 		labels: sgsLabelArr,

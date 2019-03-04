@@ -3,8 +3,8 @@ var request = require('sync-request');
 
 var openNoService = {
 	
-	sumall:function(){
-		var $url = apiBase.sumall;
+	summaryAll: function(summaryType){
+		var $url = apiBase.summaryAll+'?summaryType='+summaryType;
 		var res = request('get',$url);
 		console.log(res.getBody());
 		var bd = JSON.parse(res.getBody());
@@ -13,9 +13,22 @@ var openNoService = {
 		}
 		return null;
 	},
-	sumByDay: function(guessType){
-		var $url = apiBase.sumByDay+guessType;
+	listSomeDaySum: function(guessType,summaryType){
+		var $url = apiBase.listSomeDaySum+guessType+'?summaryType='+summaryType;
 		var res = request('get',$url);
+		console.log(res.getBody());
+		var bd = JSON.parse(res.getBody());
+		if(bd.code==200){
+			return bd.data;
+		}
+		return null;
+	},
+	postSomeDaySum: function(guessType,summaryType,openTime){
+		var $url = apiBase.sumSomeDay+guessType;
+		var res = request('post',$url,{
+			'summaryType':summaryType,
+			'openTime':openTime
+		});
 		console.log(res.getBody());
 		var bd = JSON.parse(res.getBody());
 		if(bd.code==200){
@@ -24,7 +37,7 @@ var openNoService = {
 		return null;
 	},
 	openNoList: function(guessType,page,pageSize){
-		var $url = apiBase.openNoList+guessType+'?page='+page+'&pageSize='+pageSize;
+		var $url = apiBase.openNoList+guessType+'?openTime=&page='+page+'&pageSize='+pageSize;
 		var res = request('get',$url);
 		console.log(res.getBody());
 		var bd = JSON.parse(res.getBody());
